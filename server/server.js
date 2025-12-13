@@ -44,7 +44,8 @@ app.get('/', (req, res) => {
       products: '/api/products',
       auth: '/api/auth',
       orders: '/api/orders',
-      stats: '/api/stats'
+      stats: '/api/stats',
+      payment: '/api/create-order'
     }
   })
 })
