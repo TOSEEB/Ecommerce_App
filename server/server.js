@@ -17,6 +17,7 @@ import authRoutes from './routes/authRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
 import paymentRoutes from './routes/paymentRoutes.js'
 import statsRoutes from './routes/statsRoutes.js'
+import seedRoutes from './routes/seedRoutes.js'
 
 import { connectDB } from './config/database.js'
 
@@ -45,7 +46,8 @@ app.get('/', (req, res) => {
       auth: '/api/auth',
       orders: '/api/orders',
       stats: '/api/stats',
-      payment: '/api/create-order'
+      payment: '/api/create-order',
+      seed: '/api/seed (POST)'
     }
   })
 })
@@ -62,7 +64,8 @@ app.get('/api', (req, res) => {
       auth: '/api/auth',
       orders: '/api/orders',
       stats: '/api/stats',
-      payment: '/api/create-order'
+      payment: '/api/create-order',
+      seed: '/api/seed (POST)'
     }
   })
 })
@@ -78,6 +81,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/orders', orderRoutes)
 app.use('/api', paymentRoutes)
 app.use('/api/stats', statsRoutes)
+app.use('/api', seedRoutes)
 
 // 404
 app.use((req, res) => {
