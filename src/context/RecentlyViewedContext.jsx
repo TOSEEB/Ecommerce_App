@@ -1,0 +1,44 @@
+import { createContext, useContext, useState, useEffect } from 'react'
+
+const RecentlyViewedContext = createContext()
+
+export const useRecentlyViewed = () => {
+  const context = useContext(RecentlyViewedContext)
+  if (!context) {
+    throw new Error('useRecentlyViewed must be used within RecentlyViewedProvider')
+  }
+  return context
+}
+
+export const RecentlyViewedProvider = ({ children }) => {
+  const [recentlyViewed, setRecentlyViewed] = useState(() => {
+    const saved = localStorage.getItem('recentlyViewed')
+    return saved ? JSON.parse(saved) : []
+  })
+
+  useEffect(() => {
+    localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed))
+  }, [recentlyViewed])
+
+  const addToRecentlyViewed = (product) => {
+    setRecentlyViewed(prev => {
+      // Remove if already exists
+      const filtered = prev.filter(p => p.id !== product.id)
+      // Add to beginning and limit to 10
+      return [product, ...filtered].slice(0, 10)
+    })
+  }
+
+  const clearRecentlyViewed = () => {
+    setRecentlyViewed([])
+  }
+
+  const value = {
+    recentlyViewed,
+    addToRecentlyViewed,
+    clearRecentlyViewed,
+  }
+
+  return <RecentlyViewedContext.Provider value={value}>{children}</RecentlyViewedContext.Provider>
+}
+
