@@ -49,6 +49,23 @@ app.get('/', (req, res) => {
   })
 })
 
+// API root route
+app.get('/api', (req, res) => {
+  res.json({ 
+    message: 'E-commerce API',
+    status: 'OK',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      products: '/api/products',
+      auth: '/api/auth',
+      orders: '/api/orders',
+      stats: '/api/stats',
+      payment: '/api/create-order'
+    }
+  })
+})
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' })
