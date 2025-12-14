@@ -1,17 +1,22 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { useRecentlyViewed } from '../context/RecentlyViewedContext'
 import { FiShoppingCart, FiUser, FiLogOut, FiMenu, FiX, FiShoppingBag } from 'react-icons/fi'
 import { useState } from 'react'
 
 const Navbar = () => {
-  const { getCartItemsCount } = useCart()
+  const { getCartItemsCount, clearCart } = useCart()
   const { user, logout, isAdmin } = useAuth()
+  const { clearRecentlyViewed } = useRecentlyViewed()
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleLogout = () => {
+    // Clear all user-specific data
     logout()
+    clearCart()
+    clearRecentlyViewed()
     navigate('/')
   }
 

@@ -17,8 +17,24 @@ export const RecentlyViewedProvider = ({ children }) => {
   })
 
   useEffect(() => {
-    localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed))
+    if (recentlyViewed.length === 0) {
+      localStorage.removeItem('recentlyViewed')
+    } else {
+      localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed))
+    }
   }, [recentlyViewed])
+
+  // Listen for storage changes (e.g., when cleared on logout)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem('recentlyViewed')
+      if (!saved) {
+        setRecentlyViewed([])
+      }
+    }
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
 
   const addToRecentlyViewed = (product) => {
     setRecentlyViewed(prev => {

@@ -17,7 +17,11 @@ export const CartProvider = ({ children }) => {
   })
 
   useEffect(() => {
-    localStorage.setItem('cartItems', JSON.stringify(cartItems))
+    if (cartItems.length === 0) {
+      localStorage.removeItem('cartItems')
+    } else {
+      localStorage.setItem('cartItems', JSON.stringify(cartItems))
+    }
   }, [cartItems])
 
   const addToCart = (product, quantity = 1) => {

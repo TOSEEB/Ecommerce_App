@@ -6,9 +6,9 @@ A modern, full-featured e-commerce platform built with **React.js** frontend and
 
 ## 🌐 Live Demo
 
-🔗 **[View Live Demo](https://your-demo-url.vercel.app)** 
+🔗 **[View Live Demo](https://ecommerce-app-five-lyart.vercel.app)** 
 
-> **Note**: Deploy your app and add the live URL here. See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for step-by-step free deployment instructions.
+**Backend API:** [https://ecommerce-app-3b6r.onrender.com](https://ecommerce-app-3b6r.onrender.com)
 
 ## 📸 Screenshots
 
