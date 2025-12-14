@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { productsAPI, statsAPI } from '../services/api'
 import { useToast } from '../context/ToastContext'
+import { formatError } from '../utils/errorHandler'
 import { FiPlus, FiEdit, FiTrash2, FiPackage, FiDollarSign, FiUsers } from 'react-icons/fi'
 
 const AdminPanel = () => {
@@ -41,6 +42,8 @@ const AdminPanel = () => {
       setProducts(response.data)
     } catch (error) {
       console.error('Error fetching products:', error)
+      const errorMessage = error.userMessage || formatError(error)
+      error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -52,6 +55,8 @@ const AdminPanel = () => {
       setStats(response.data)
     } catch (error) {
       console.error('Error fetching stats:', error)
+      const errorMessage = error.userMessage || formatError(error)
+      error(errorMessage)
     }
   }
 

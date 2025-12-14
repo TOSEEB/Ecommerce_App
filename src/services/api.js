@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { formatError } from '../utils/errorHandler'
 
 // Ensure API_URL always ends with /api
 let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
@@ -32,6 +33,12 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Format error message for user-friendly display
+    const formattedError = {
+      ...error,
+      userMessage: formatError(error)
+    }
+    
     if (error.code === 'ERR_NETWORK' || error.message?.includes('Failed to fetch')) {
       console.error('Network error - backend might not be running')
     }
@@ -39,9 +46,14 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      window.location.href = '/login'
+      localStorage.removeItem('isAdmin')
+      // Don't redirect if already on login page
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login'
+      }
     }
-    return Promise.reject(error)
+    
+    return Promise.reject(formattedError)
   }
 )
 

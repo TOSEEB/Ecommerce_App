@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { ordersAPI } from '../services/api'
 import { validateEmail, validatePhone, validatePinCode, sanitizeInput } from '../utils/validation'
+import { formatError } from '../utils/errorHandler'
 import { FiLock, FiLoader } from 'react-icons/fi'
 import axios from 'axios'
 
@@ -196,17 +197,7 @@ const CheckoutForm = ({ cartItems, getCartTotal, clearCart, formData, setFormDat
       razorpay.open()
     } catch (error) {
       console.error('Payment error:', error)
-      
-      let errorMessage = 'Payment failed. Please try again.'
-      
-      if (error.code === 'ERR_NETWORK' || error.message?.includes('Failed to fetch')) {
-        errorMessage = 'Cannot connect to server. Please make sure the backend is running on port 5000.'
-      } else if (error.response?.data?.error) {
-        errorMessage = error.response.data.error
-      } else if (error.message) {
-        errorMessage = error.message
-      }
-      
+      const errorMessage = error.userMessage || formatError(error)
       setError(errorMessage)
       setProcessing(false)
     }

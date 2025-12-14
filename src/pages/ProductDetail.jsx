@@ -35,6 +35,7 @@ const ProductDetail = () => {
       }
     } catch (error) {
       console.error('Error fetching product:', error)
+      // Product will remain null, which will show "Product not found" message
     } finally {
       setLoading(false)
     }

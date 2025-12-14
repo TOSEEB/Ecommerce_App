@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { authAPI } from '../services/api'
+import { formatError } from '../utils/errorHandler'
 
 const AuthContext = createContext()
 
@@ -43,9 +44,11 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.user)
         return { success: true, user: response.data.user }
       }
-      return { success: false, error: 'Login failed' }
+      return { success: false, error: response.data.error || 'Login failed. Please check your credentials.' }
     } catch (error) {
-      return { success: false, error: error.response?.data?.error || 'Login failed' }
+      // Use formatted error message
+      const errorMessage = error.userMessage || formatError(error)
+      return { success: false, error: errorMessage }
     }
   }
 
@@ -57,9 +60,11 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.user)
         return { success: true, user: response.data.user }
       }
-      return { success: false, error: 'Registration failed' }
+      return { success: false, error: response.data.error || 'Registration failed. Please try again.' }
     } catch (error) {
-      return { success: false, error: error.response?.data?.error || 'Registration failed' }
+      // Use formatted error message
+      const errorMessage = error.userMessage || formatError(error)
+      return { success: false, error: errorMessage }
     }
   }
 

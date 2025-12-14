@@ -7,6 +7,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { productsAPI } from '../services/api'
+import { formatError } from '../utils/errorHandler'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { debounce } from '../utils/performance'
 import { FiSearch, FiStar, FiFilter, FiChevronDown } from 'react-icons/fi'
@@ -62,7 +63,8 @@ const Products = () => {
       setProducts(response.data)
     } catch (error) {
       console.error('Error fetching products:', error)
-      setError('Failed to load products. Please try again later.')
+      const errorMessage = error.userMessage || formatError(error)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

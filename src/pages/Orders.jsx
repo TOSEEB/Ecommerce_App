@@ -2,11 +2,14 @@ import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { ordersAPI } from '../services/api'
+import { formatError } from '../utils/errorHandler'
+import { useToast } from '../context/ToastContext'
 import { FiPackage, FiCalendar, FiDollarSign } from 'react-icons/fi'
 
 const Orders = () => {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const { error: showError } = useToast()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -25,6 +28,8 @@ const Orders = () => {
       setOrders(response.data.reverse())
     } catch (error) {
       console.error('Error fetching orders:', error)
+      const errorMessage = error.userMessage || formatError(error)
+      showError(errorMessage)
     } finally {
       setLoading(false)
     }
