@@ -1,9 +1,3 @@
-/**
- * Products Page Component
- * Displays product catalog with search, filter, and sort functionality
- * @module pages/Products
- */
-
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { productsAPI } from '../services/api'
@@ -13,12 +7,6 @@ import { debounce } from '../utils/performance'
 import { FiSearch, FiStar, FiFilter, FiChevronDown } from 'react-icons/fi'
 
 const categories = ['All', 'Electronics', 'Accessories', 'Furniture']
-
-/**
- * Products Page Component
- * Features: Search, Category Filter, Price Range Filter, Sorting
- * @returns {JSX.Element} Products page with filtering and sorting
- */
 const Products = () => {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -29,7 +17,6 @@ const Products = () => {
   const [error, setError] = useState(null)
   const [searchInput, setSearchInput] = useState('')
 
-  // Debounced search to avoid too many API calls
   const debouncedSearch = useMemo(
     () => debounce((value) => {
       setSearchTerm(value)
@@ -37,7 +24,6 @@ const Products = () => {
     []
   )
 
-  // Handle search input with debounce
   const handleSearchChange = (e) => {
     const value = e.target.value
     setSearchInput(value)
@@ -48,10 +34,6 @@ const Products = () => {
     fetchProducts()
   }, [])
 
-  /**
-   * Fetches products from the API
-   * Handles errors and loading states
-   */
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true)
@@ -62,7 +44,6 @@ const Products = () => {
       const response = await productsAPI.getAll(params)
       setProducts(response.data)
     } catch (error) {
-      console.error('Error fetching products:', error)
       const errorMessage = error.userMessage || formatError(error)
       setError(errorMessage)
     } finally {
@@ -74,10 +55,6 @@ const Products = () => {
     fetchProducts()
   }, [fetchProducts])
 
-  /**
-   * Memoized filtered and sorted products
-   * Optimizes performance by only recalculating when dependencies change
-   */
   const filteredProducts = useMemo(() => {
     if (loading) return []
 
@@ -89,7 +66,6 @@ const Products = () => {
       return matchesCategory && matchesSearch && matchesPrice
     })
 
-    // Sort products based on selected option
     switch (sortBy) {
       case 'price-low':
         return [...filtered].sort((a, b) => a.price - b.price)

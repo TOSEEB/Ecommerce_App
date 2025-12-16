@@ -1,12 +1,10 @@
 import User from '../models/User.js'
 import { generateToken } from '../utils/jwt.js'
 
-// Register user
 export async function register(req, res) {
   try {
     const { name, email, password } = req.body
 
-    // Trim whitespace
     const trimmedName = name?.trim()
     const trimmedEmail = email?.trim()
     const trimmedPassword = password?.trim()
@@ -22,13 +20,11 @@ export async function register(req, res) {
       })
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email: trimmedEmail.toLowerCase() })
     if (existingUser) {
       return res.status(400).json({ error: 'User already exists' })
     }
 
-    // Create new user (password will be hashed by pre-save hook)
     const newUser = new User({
       name: trimmedName,
       email: trimmedEmail.toLowerCase(),
@@ -50,8 +46,6 @@ export async function register(req, res) {
       token,
     })
   } catch (error) {
-    console.error('Registration error:', error)
-    
     if (error.name === 'ValidationError') {
       const errors = Object.values(error.errors).map((e) => e.message)
       return res.status(400).json({ error: errors.join(', ') })
@@ -65,7 +59,6 @@ export async function register(req, res) {
   }
 }
 
-// Login
 export async function login(req, res) {
   try {
     const { email, password } = req.body
@@ -74,14 +67,12 @@ export async function login(req, res) {
       return res.status(400).json({ error: 'Email and password are required' })
     }
 
-    // Find user and include password for comparison
     const user = await User.findOne({ email: email.toLowerCase() }).select('+password')
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' })
     }
 
-    // Verify password using model method
     const isValid = await user.comparePassword(password)
 
     if (!isValid) {

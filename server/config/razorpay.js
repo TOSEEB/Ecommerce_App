@@ -17,12 +17,8 @@ if (razorpayKeyId && razorpayKeySecret) {
       key_id: razorpayKeyId,
       key_secret: razorpayKeySecret,
     })
-    console.log('Razorpay initialized')
   } catch (error) {
-    console.error('Razorpay init failed:', error.message)
   }
-} else {
-  console.log('Razorpay keys not found in .env')
 }
 
 export default razorpay

@@ -17,7 +17,6 @@ const Home = () => {
       const response = await productsAPI.getAll()
       setFeaturedProducts(response.data.slice(0, 4))
     } catch (error) {
-      console.error('Error fetching products:', error)
     }
   }
 

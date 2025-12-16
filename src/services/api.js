@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { formatError } from '../utils/errorHandler'
 
-// Ensure API_URL always ends with /api
 let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 if (!API_URL.endsWith('/api')) {
   API_URL = API_URL.endsWith('/') ? `${API_URL}api` : `${API_URL}/api`
@@ -15,7 +14,6 @@ const api = axios.create({
   timeout: 10000,
 })
 
-// Add auth token to requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token')
@@ -29,25 +27,18 @@ api.interceptors.request.use(
   }
 )
 
-// Handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Format error message for user-friendly display
     const formattedError = {
       ...error,
       userMessage: formatError(error)
-    }
-    
-    if (error.code === 'ERR_NETWORK' || error.message?.includes('Failed to fetch')) {
-      console.error('Network error - backend might not be running')
     }
     
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       localStorage.removeItem('isAdmin')
-      // Don't redirect if already on login page
       if (window.location.pathname !== '/login') {
         window.location.href = '/login'
       }

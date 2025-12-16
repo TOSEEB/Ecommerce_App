@@ -18,7 +18,6 @@ const OrderSuccess = () => {
       const foundOrder = response.data.find(o => o.paymentIntentId === paymentIntentId)
       setOrder(foundOrder)
     } catch (error) {
-      console.error('Error fetching order:', error)
     } finally {
       setLoading(false)
     }

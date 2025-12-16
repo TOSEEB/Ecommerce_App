@@ -41,7 +41,6 @@ const AdminPanel = () => {
       const response = await productsAPI.getAll()
       setProducts(response.data)
     } catch (error) {
-      console.error('Error fetching products:', error)
       const errorMessage = error.userMessage || formatError(error)
       error(errorMessage)
     } finally {
@@ -54,7 +53,6 @@ const AdminPanel = () => {
       const response = await statsAPI.getStats()
       setStats(response.data)
     } catch (error) {
-      console.error('Error fetching stats:', error)
       const errorMessage = error.userMessage || formatError(error)
       error(errorMessage)
     }
@@ -78,7 +76,6 @@ const AdminPanel = () => {
       await fetchStats()
       handleCloseModal()
     } catch (err) {
-      console.error('Error saving product:', err)
       error('Failed to save product. Please try again.')
     }
   }
@@ -108,7 +105,6 @@ const AdminPanel = () => {
           await fetchStats()
           success('Product deleted successfully!')
         } catch (err) {
-          console.error('Error deleting product:', err)
           error('Failed to delete product. Please try again.')
         }
       }

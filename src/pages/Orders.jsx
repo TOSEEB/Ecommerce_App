@@ -27,7 +27,6 @@ const Orders = () => {
       const response = await ordersAPI.getAll()
       setOrders(response.data.reverse())
     } catch (error) {
-      console.error('Error fetching orders:', error)
       const errorMessage = error.userMessage || formatError(error)
       showError(errorMessage)
     } finally {

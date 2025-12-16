@@ -168,7 +168,6 @@ const CheckoutForm = ({ cartItems, getCartTotal, clearCart, formData, setFormDat
               setProcessing(false)
             }
           } catch (orderError) {
-            console.error('Order creation error:', orderError)
             setError(orderError.response?.data?.error || 'Order creation failed. Payment was successful, please contact support.')
             setProcessing(false)
           }
@@ -196,7 +195,6 @@ const CheckoutForm = ({ cartItems, getCartTotal, clearCart, formData, setFormDat
       const razorpay = new window.Razorpay(options)
       razorpay.open()
     } catch (error) {
-      console.error('Payment error:', error)
       const errorMessage = error.userMessage || formatError(error)
       setError(errorMessage)
       setProcessing(false)

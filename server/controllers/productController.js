@@ -1,6 +1,5 @@
 import Product from '../models/Product.js'
 
-// Get all products
 export async function getAllProducts(req, res) {
   try {
     const { category, search } = req.query
@@ -18,8 +17,6 @@ export async function getAllProducts(req, res) {
     }
 
     const products = await Product.find(query).sort({ createdAt: -1 })
-    
-    // Format for frontend
     const formattedProducts = products.map((product) => product.toFrontendFormat())
 
     res.json(formattedProducts)
@@ -28,19 +25,14 @@ export async function getAllProducts(req, res) {
   }
 }
 
-/**
- * Get product by ID
- */
 export async function getProductById(req, res) {
   try {
-    // Try to find by productId (numeric) first, then by MongoDB _id
     let product = await Product.findOne({ productId: parseInt(req.params.id) })
     
     if (!product) {
       try {
         product = await Product.findById(req.params.id)
       } catch (e) {
-        // Not a valid MongoDB ObjectId, continue
       }
     }
     
@@ -57,17 +49,14 @@ export async function getProductById(req, res) {
   }
 }
 
-// Get similar products
 export async function getSimilarProducts(req, res) {
   try {
-    // Try to find by productId first, then by MongoDB _id
     let currentProduct = await Product.findOne({ productId: parseInt(req.params.id) })
     
     if (!currentProduct) {
       try {
         currentProduct = await Product.findById(req.params.id)
       } catch (e) {
-        // Not a valid MongoDB ObjectId
       }
     }
 
@@ -93,10 +82,8 @@ export async function getSimilarProducts(req, res) {
   }
 }
 
-// Create product (admin only)
 export async function createProduct(req, res) {
   try {
-    // Generate productId if missing
     if (!req.body.productId) {
       const count = await Product.countDocuments()
       req.body.productId = count + 1
@@ -121,7 +108,6 @@ export async function createProduct(req, res) {
   }
 }
 
-// Update product
 export async function updateProduct(req, res) {
   try {
     const product = await Product.findById(req.params.id)
@@ -130,14 +116,12 @@ export async function updateProduct(req, res) {
       return res.status(404).json({ error: 'Product not found' })
     }
 
-    // Update fields
     Object.keys(req.body).forEach((key) => {
       if (req.body[key] !== undefined) {
         product[key] = req.body[key]
       }
     })
 
-    // Ensure numeric fields are properly converted
     if (req.body.price !== undefined) {
       product.price = parseFloat(req.body.price)
     }
@@ -163,7 +147,6 @@ export async function updateProduct(req, res) {
   }
 }
 
-// Delete product
 export async function deleteProduct(req, res) {
   try {
     const product = await Product.findByIdAndDelete(req.params.id)

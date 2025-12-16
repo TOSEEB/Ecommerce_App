@@ -34,7 +34,6 @@ const ProductDetail = () => {
         addToRecentlyViewed(response.data)
       }
     } catch (error) {
-      console.error('Error fetching product:', error)
       // Product will remain null, which will show "Product not found" message
     } finally {
       setLoading(false)
@@ -46,7 +45,6 @@ const ProductDetail = () => {
       const response = await productsAPI.getSimilar(id)
       setSimilarProducts(response.data)
     } catch (error) {
-      console.error('Error fetching similar products:', error)
     }
   }
 

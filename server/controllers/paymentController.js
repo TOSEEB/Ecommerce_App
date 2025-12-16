@@ -1,15 +1,6 @@
-/**
- * Payment Controller
- * Handles Razorpay payment operations
- * @module controllers/paymentController
- */
-
 import razorpay, { razorpayKeyId } from '../config/razorpay.js'
 import crypto from 'crypto'
 
-/**
- * Create Razorpay order
- */
 export async function createRazorpayOrder(req, res) {
   try {
     if (!razorpay) {
@@ -24,7 +15,6 @@ export async function createRazorpayOrder(req, res) {
       return res.status(400).json({ error: 'Valid amount is required' })
     }
 
-    // Convert to paise (Razorpay uses smallest currency unit)
     const amountInPaise = Math.round(amount * 100)
 
     const options = {
@@ -42,14 +32,10 @@ export async function createRazorpayOrder(req, res) {
       keyId: razorpayKeyId,
     })
   } catch (error) {
-    console.error('Razorpay order creation error:', error)
     res.status(500).json({ error: error.message || 'Failed to create payment order' })
   }
 }
 
-/**
- * Verify Razorpay payment signature
- */
 export async function verifyPayment(req, res) {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body
@@ -64,7 +50,6 @@ export async function verifyPayment(req, res) {
       })
     }
 
-    // Verify signature
     const text = `${razorpay_order_id}|${razorpay_payment_id}`
     const secret = process.env.RAZORPAY_KEY_SECRET
     const generatedSignature = crypto
@@ -76,7 +61,6 @@ export async function verifyPayment(req, res) {
       return res.status(400).json({ error: 'Payment verification failed: Invalid signature' })
     }
 
-    // Fetch payment details from Razorpay
     try {
       const payment = await razorpay.payments.fetch(razorpay_payment_id)
       res.json({
@@ -90,11 +74,9 @@ export async function verifyPayment(req, res) {
         },
       })
     } catch (error) {
-      console.error('Error fetching payment details:', error)
       res.status(500).json({ error: 'Failed to fetch payment details' })
     }
   } catch (error) {
-    console.error('Payment verification error:', error)
     res.status(500).json({ error: error.message || 'Payment verification failed' })
   }
 }
