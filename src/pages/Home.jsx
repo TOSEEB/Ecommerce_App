@@ -16,14 +16,20 @@ const Home = () => {
   const fetchFeaturedProducts = async () => {
     try {
       setLoading(true)
-      const wakeUpResponse = await fetch(`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}/api/wake-up`)
-      await wakeUpResponse.json()
+      const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+      try {
+        const wakeUpResponse = await fetch(`${API_BASE}/api/wake-up`, { 
+          signal: AbortSignal.timeout(5000) 
+        })
+        if (wakeUpResponse.ok) {
+          await wakeUpResponse.json()
+        }
+      } catch {}
       
       const response = await productsAPI.getAll()
       setFeaturedProducts(response.data.slice(0, 4))
     } catch (error) {
-      const response = await productsAPI.getAll()
-      setFeaturedProducts(response.data.slice(0, 4))
+      setFeaturedProducts([])
     } finally {
       setLoading(false)
     }

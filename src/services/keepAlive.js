@@ -19,7 +19,7 @@ const pingBackend = async () => {
     
     clearTimeout(timeoutId)
     
-    if (response.ok) {
+    if (response.ok || response.status === 404) {
       return true
     }
     return false
