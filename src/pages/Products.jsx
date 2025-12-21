@@ -38,6 +38,12 @@ const Products = () => {
     try {
       setLoading(true)
       setError(null)
+      
+      const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+      try {
+        await fetch(`${API_BASE}/api/wake-up`, { signal: AbortSignal.timeout(5000) })
+      } catch {}
+      
       const params = {}
       if (selectedCategory !== 'All') params.category = selectedCategory
       if (searchTerm) params.search = searchTerm
@@ -184,9 +190,12 @@ const Products = () => {
         </div>
       ) : error ? (
         <div className="text-center py-12">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg max-w-md mx-auto">
-            <p className="font-semibold mb-2">Error Loading Products</p>
-            <p className="text-sm">{error}</p>
+          <div className="bg-blue-50 border border-blue-200 text-blue-800 px-6 py-4 rounded-lg max-w-md mx-auto">
+            <div className="mb-4">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+            <p className="font-semibold mb-2">Loading Products...</p>
+            <p className="text-sm mb-4">Please wait while we prepare everything for you.</p>
             <button
               onClick={fetchProducts}
               className="mt-4 btn-primary"

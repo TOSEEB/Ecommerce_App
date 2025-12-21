@@ -67,6 +67,16 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' })
 })
 
+app.get('/api/wake-up', async (req, res) => {
+  try {
+    const Product = (await import('./models/Product.js')).default
+    const count = await Product.countDocuments()
+    res.json({ status: 'OK', message: 'Backend is awake', productsCount: count })
+  } catch (error) {
+    res.status(500).json({ status: 'ERROR', message: error.message })
+  }
+})
+
 app.use('/api/products', productRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/orders', orderRoutes)

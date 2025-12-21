@@ -7,9 +7,9 @@ const BASE_URL = API_URL.replace('/api', '')
 const pingBackend = async () => {
   try {
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 5000)
+    const timeoutId = setTimeout(() => controller.abort(), 10000)
     
-    const response = await fetch(`${BASE_URL}/api/health`, {
+    const response = await fetch(`${BASE_URL}/api/wake-up`, {
       method: 'GET',
       signal: controller.signal,
       headers: {
@@ -33,13 +33,19 @@ export const startKeepAlive = () => {
     return
   }
 
+  pingBackend()
+
   setTimeout(() => {
     pingBackend()
-  }, 60000)
+  }, 15000)
+
+  setTimeout(() => {
+    pingBackend()
+  }, 30000)
 
   keepAliveInterval = setInterval(() => {
     pingBackend()
-  }, 10 * 60 * 1000)
+  }, 7 * 60 * 1000)
 
   isActive = true
 }

@@ -49,7 +49,7 @@ export const formatError = (error) => {
   }
 
   if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-    return 'Request timed out. Please try again.'
+    return 'Backend is waking up. Please wait a moment and try again.'
   }
 
   return error.message || 'An unexpected error occurred. Please try again.'

@@ -1,17 +1,21 @@
 import axios from 'axios'
 import { formatError } from '../utils/errorHandler'
+import { retryRequest } from '../utils/retry'
 
 let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 if (!API_URL.endsWith('/api')) {
   API_URL = API_URL.endsWith('/') ? `${API_URL}api` : `${API_URL}/api`
 }
 
+const isProduction = !import.meta.env.DEV
+const TIMEOUT = isProduction ? 60000 : 10000
+
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000,
+  timeout: TIMEOUT,
 })
 
 api.interceptors.request.use(
@@ -49,9 +53,9 @@ api.interceptors.response.use(
 )
 
 export const productsAPI = {
-  getAll: (params = {}) => api.get('/products', { params }),
-  getById: (id) => api.get(`/products/${id}`),
-  getSimilar: (id) => api.get(`/products/${id}/similar`),
+  getAll: (params = {}) => retryRequest(() => api.get('/products', { params }), 2, 2000),
+  getById: (id) => retryRequest(() => api.get(`/products/${id}`), 2, 2000),
+  getSimilar: (id) => retryRequest(() => api.get(`/products/${id}/similar`), 2, 2000),
   create: (product) => api.post('/products', product),
   update: (id, product) => api.put(`/products/${id}`, product),
   delete: (id) => api.delete(`/products/${id}`),

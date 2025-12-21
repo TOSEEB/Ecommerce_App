@@ -6,6 +6,7 @@ import { useRecentlyViewed } from '../context/RecentlyViewedContext'
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([])
+  const [loading, setLoading] = useState(true)
   const { recentlyViewed } = useRecentlyViewed()
 
   useEffect(() => {
@@ -14,9 +15,17 @@ const Home = () => {
 
   const fetchFeaturedProducts = async () => {
     try {
+      setLoading(true)
+      const wakeUpResponse = await fetch(`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}/api/wake-up`)
+      await wakeUpResponse.json()
+      
       const response = await productsAPI.getAll()
       setFeaturedProducts(response.data.slice(0, 4))
     } catch (error) {
+      const response = await productsAPI.getAll()
+      setFeaturedProducts(response.data.slice(0, 4))
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -97,8 +106,22 @@ const Home = () => {
             <h2 className="text-4xl font-bold mb-4 gradient-text">Featured Products</h2>
             <p className="text-gray-600 text-lg">Check out our most popular items</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product, index) => (
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="card animate-pulse">
+                  <div className="h-64 bg-gray-200 rounded-t-2xl"></div>
+                  <div className="p-6">
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+                    <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : featuredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {featuredProducts.map((product, index) => (
               <Link
                 key={product.id}
                 to={`/products/${product.id}`}
@@ -127,13 +150,16 @@ const Home = () => {
                   </div>
                 </div>
               </Link>
-            ))}
-          </div>
-          <div className="text-center mt-16">
-            <Link to="/products" className="btn-primary text-lg px-12 py-4">
-              View All Products →
-            </Link>
-          </div>
+              ))}
+            </div>
+          ) : null}
+          {featuredProducts.length > 0 && (
+            <div className="text-center mt-16">
+              <Link to="/products" className="btn-primary text-lg px-12 py-4">
+                View All Products →
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
