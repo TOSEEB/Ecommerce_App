@@ -36,6 +36,7 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     endpoints: {
       health: '/api/health',
+      wakeUp: '/api/wake-up',
       products: '/api/products',
       auth: '/api/auth',
       orders: '/api/orders',
@@ -53,6 +54,7 @@ app.get('/api', (req, res) => {
     version: '1.0.0',
     endpoints: {
       health: '/api/health',
+      wakeUp: '/api/wake-up',
       products: '/api/products',
       auth: '/api/auth',
       orders: '/api/orders',
