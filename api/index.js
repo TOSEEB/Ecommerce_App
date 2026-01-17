@@ -90,16 +90,19 @@ app.use((err, req, res, next) => {
 
 let dbConnected = false
 
-export default async function handler(req, res) {
+async function connectDatabase() {
   if (!dbConnected) {
     try {
       await connectDB()
       dbConnected = true
     } catch (error) {
-      return res.status(500).json({ error: 'Database connection failed' })
+      console.error('Database connection failed:', error)
     }
   }
-  
+}
+
+export default async function handler(req, res) {
+  await connectDatabase()
   return app(req, res)
 }
 
