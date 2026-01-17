@@ -1,7 +1,12 @@
 let keepAliveInterval = null
 let isActive = false
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
+if (!API_URL || API_URL.trim() === '' || API_URL.startsWith(':')) {
+  API_URL = import.meta.env.DEV ? 'http://localhost:5000/api' : 'https://ecommerce-app-3b6r.onrender.com/api'
+}
+
 const BASE_URL = API_URL.replace('/api', '')
 
 const pingBackend = async () => {

@@ -3,6 +3,11 @@ import { formatError } from '../utils/errorHandler'
 import { retryRequest } from '../utils/retry'
 
 let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
+if (!API_URL || API_URL.trim() === '' || API_URL.startsWith(':')) {
+  API_URL = import.meta.env.DEV ? 'http://localhost:5000/api' : 'https://ecommerce-app-3b6r.onrender.com/api'
+}
+
 if (!API_URL.endsWith('/api')) {
   API_URL = API_URL.endsWith('/') ? `${API_URL}api` : `${API_URL}/api`
 }

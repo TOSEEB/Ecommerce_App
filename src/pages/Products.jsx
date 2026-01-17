@@ -39,7 +39,10 @@ const Products = () => {
       setLoading(true)
       setError(null)
       
-      const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+      let API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+      if (!API_BASE || API_BASE.trim() === '' || API_BASE.startsWith(':')) {
+        API_BASE = import.meta.env.DEV ? 'http://localhost:5000' : 'https://ecommerce-app-3b6r.onrender.com'
+      }
       try {
         const wakeUpResponse = await fetch(`${API_BASE}/api/wake-up`, { 
           signal: AbortSignal.timeout(5000) 
