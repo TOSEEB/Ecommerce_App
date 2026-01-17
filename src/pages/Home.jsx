@@ -16,9 +16,9 @@ const Home = () => {
   const fetchFeaturedProducts = async () => {
     try {
       setLoading(true)
-      let API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+      let API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '')
       if (!API_BASE || API_BASE.trim() === '' || API_BASE.startsWith(':')) {
-        API_BASE = import.meta.env.DEV ? 'http://localhost:5000' : 'https://ecommerce-app-3b6r.onrender.com'
+        API_BASE = import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin
       }
       try {
         const wakeUpResponse = await fetch(`${API_BASE}/api/wake-up`, { 

@@ -1,10 +1,15 @@
 let keepAliveInterval = null
 let isActive = false
 
-let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+let API_URL = import.meta.env.VITE_API_URL
 
 if (!API_URL || API_URL.trim() === '' || API_URL.startsWith(':')) {
-  API_URL = import.meta.env.DEV ? 'http://localhost:5000/api' : 'https://ecommerce-app-3b6r.onrender.com/api'
+  if (import.meta.env.DEV) {
+    API_URL = 'http://localhost:5000/api'
+  } else {
+    const currentOrigin = window.location.origin
+    API_URL = `${currentOrigin}/api`
+  }
 }
 
 const BASE_URL = API_URL.replace('/api', '')
