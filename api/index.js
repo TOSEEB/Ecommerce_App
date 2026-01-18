@@ -13,6 +13,7 @@ import seedRoutes from '../server/routes/seedRoutes.js'
 
 import { connectDB } from '../server/config/database.js'
 
+// Import config files - they handle errors internally
 import '../server/config/razorpay.js'
 import '../server/config/email.js'
 
@@ -96,13 +97,24 @@ async function connectDatabase() {
       await connectDB()
       dbConnected = true
     } catch (error) {
-      console.error('Database connection failed:', error)
+      console.error('Database connection failed:', error.message)
+      // Don't throw - allow the app to continue without DB for some endpoints
     }
   }
 }
 
 export default async function handler(req, res) {
-  await connectDatabase()
-  return app(req, res)
+  try {
+    // Connect to database (non-blocking, won't crash if it fails)
+    await connectDatabase()
+    
+    // Return Express app handling the request
+    return app(req, res)
+  } catch (error) {
+    console.error('Handler error:', error)
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Internal server error', message: error.message })
+    }
+  }
 }
 

@@ -4,10 +4,14 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecomme
 
 export async function connectDB() {
   try {
+    if (mongoose.connection.readyState === 1) {
+      return mongoose.connection
+    }
     const conn = await mongoose.connect(MONGODB_URI)
     return conn
   } catch (error) {
-    process.exit(1)
+    console.error('Database connection error:', error.message)
+    throw error
   }
 }
 
