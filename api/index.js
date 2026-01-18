@@ -104,17 +104,13 @@ async function connectDatabase() {
 }
 
 export default async function handler(req, res) {
-  try {
-    // Connect to database (non-blocking, won't crash if it fails)
-    await connectDatabase()
-    
-    // Return Express app handling the request
-    return app(req, res)
-  } catch (error) {
-    console.error('Handler error:', error)
-    if (!res.headersSent) {
-      res.status(500).json({ error: 'Internal server error', message: error.message })
-    }
-  }
+  // Don't block on database connection - let it connect in background
+  // Routes that need DB will handle their own connection
+  connectDatabase().catch(err => {
+    console.error('Database connection error:', err.message)
+  })
+  
+  // Handle request with Express
+  return app(req, res)
 }
 
