@@ -103,14 +103,7 @@ async function connectDatabase() {
   }
 }
 
-export default async function handler(req, res) {
-  // Don't block on database connection - let it connect in background
-  // Routes that need DB will handle their own connection
-  connectDatabase().catch(err => {
-    console.error('Database connection error:', err.message)
-  })
-  
-  // Handle request with Express
-  return app(req, res)
-}
+// For Vercel serverless functions, export the Express app directly
+// Vercel's @vercel/node automatically handles Express apps
+export default app
 
