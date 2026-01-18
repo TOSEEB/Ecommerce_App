@@ -12,6 +12,7 @@ import statsRoutes from '../server/routes/statsRoutes.js'
 import seedRoutes from '../server/routes/seedRoutes.js'
 
 import { connectDB } from '../server/config/database.js'
+import mongoose from 'mongoose'
 
 // Import config files - they handle errors internally
 import '../server/config/razorpay.js'
@@ -74,11 +75,51 @@ app.get('/api/wake-up', async (req, res) => {
   }
 })
 
-app.use('/api/products', productRoutes)
-app.use('/api/auth', authRoutes)
-app.use('/api/orders', orderRoutes)
+let dbConnected = false
+let dbConnecting = false
+
+async function ensureDBConnection() {
+  if (dbConnected || mongoose.connection.readyState === 1) {
+    return true
+  }
+  
+  if (dbConnecting) {
+    // Wait for ongoing connection attempt
+    while (dbConnecting) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+    return dbConnected
+  }
+  
+  dbConnecting = true
+  try {
+    await connectDB()
+    dbConnected = true
+    return true
+  } catch (error) {
+    console.error('Database connection failed:', error.message)
+    dbConnected = false
+    return false
+  } finally {
+    dbConnecting = false
+  }
+}
+
+// Middleware to ensure DB connection for routes that need it
+const requireDB = async (req, res, next) => {
+  const connected = await ensureDBConnection()
+  if (!connected) {
+    return res.status(500).json({ error: 'Database connection unavailable' })
+  }
+  next()
+}
+
+// Apply DB connection middleware BEFORE routes
+app.use('/api/products', requireDB, productRoutes)
+app.use('/api/orders', requireDB, orderRoutes)
+app.use('/api/auth', requireDB, authRoutes)
+app.use('/api/stats', requireDB, statsRoutes)
 app.use('/api', paymentRoutes)
-app.use('/api/stats', statsRoutes)
 app.use('/api', seedRoutes)
 
 app.use((req, res) => {
@@ -88,20 +129,6 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   res.status(500).json({ error: err.message || 'Something went wrong' })
 })
-
-let dbConnected = false
-
-async function connectDatabase() {
-  if (!dbConnected) {
-    try {
-      await connectDB()
-      dbConnected = true
-    } catch (error) {
-      console.error('Database connection failed:', error.message)
-      // Don't throw - allow the app to continue without DB for some endpoints
-    }
-  }
-}
 
 // For Vercel serverless functions, export the Express app directly
 // Vercel's @vercel/node automatically handles Express apps
