@@ -3,7 +3,7 @@ import transporter from '../config/email.js'
 // Send order confirmation email
 export async function sendOrderConfirmationEmail(order) {
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.log('Email not configured. Skipping email send.')
+    console.log('Email not configured. SMTP_USER or SMTP_PASS missing. Skipping email send.')
     return
   }
 
@@ -74,6 +74,13 @@ ShopHub Team
     `,
   }
 
-  await transporter.sendMail(mailOptions)
+  try {
+    const info = await transporter.sendMail(mailOptions)
+    console.log('Order confirmation email sent successfully:', info.messageId)
+    return info
+  } catch (error) {
+    console.error('Failed to send order confirmation email:', error.message)
+    throw error
+  }
 }
 

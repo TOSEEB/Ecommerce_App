@@ -174,7 +174,10 @@ export async function createOrder(req, res) {
         id: newOrder._id.toString().slice(-6),
         date: newOrder.createdAt.toISOString(),
       })
+      console.log(`Order confirmation email sent for order #${newOrder._id.toString().slice(-6)}`)
     } catch (emailError) {
+      console.error('Failed to send order confirmation email:', emailError.message)
+      // Don't fail the order creation if email fails
     }
 
     res.status(201).json({
